@@ -1,0 +1,21 @@
+{   
+    "name":"expo-leaflet-navigation-map",
+    "author": "Kark Angelo V. Pada",
+    "version": "1.0.0",
+    "description":"A component for integrating LeafletJS map via web view to your react-native application on Expo projects.",
+    "main": "./index.js",
+    "type": "module",
+    "types": "./index.d.ts",
+    "module": "./index.js",
+    "dependencies": {
+        "react-native-webview": "13.16.0"
+    },
+    "keywords": ["expo","mapping","react-native","navigation", "directions", "Leaflet", "osm", "easy integration", "component", "map"],
+    "license": "MIT",
+    "peerDependencies": {
+        "react": ">=17",
+        "react-native": ">=0.68",
+        "expo": ">=48"
+    }
+
+}
