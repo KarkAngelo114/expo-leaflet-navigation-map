@@ -7,7 +7,7 @@ A lightweight React Native component for Expo projects that integrates [LeafletJ
 ✅ Draw routes between two points using free OSM data  
 ✅ Show a built-in directions panel (optional)
 
-## Gettiog started
+## Getting started
 
 Install via npx expo installation
 

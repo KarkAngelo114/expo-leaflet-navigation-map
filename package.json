@@ -16,6 +16,14 @@
         "react": ">=17",
         "react-native": ">=0.68",
         "expo": ">=48"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/KarkAngelo114/expo-leaflet-navigation-map"
+    },
+    "homepage": "https://github.com/KarkAngelo114/expo-leaflet-navigation-map#readme",
+    "bugs": {
+        "url": "https://github.com/KarkAngelo114/expo-leaflet-navigation-map/issues"
     }
 
 }
