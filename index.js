@@ -1,17 +1,74 @@
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import { FlatList, View, Text} from "react-native";
 import { WebView } from "react-native-webview";
 
+/**
+ * 
+ * @param {String} PlaceName - Name of the place to search 
+ * @returns {Object} - returns an Object containing StatusCode, responseData, and message
+ */
+export const SearchByPlace = async (PlaceName) => {
+  let StatusCode = null;
+  try {
+    let limit = 5;
+    const url = `https://nominatim.openstreetmap.org/search?format=json&limit=${limit}&q=${encodeURIComponent(PlaceName)}`;
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'User-Agent':'expo-leaflet-navigation-map'
+      }
+    });
+
+    const data = await response.json();
+    StatusCode = response.status;
+
+    return {
+      StatusCode,
+      responseData: data,
+      message: StatusCode == 200 ? 'Success': 'Failed to fetch data'
+    }
+
+  }
+  catch (e) {
+    console.error(e);
+    return {
+      StatusCode: 500,
+      responseData: null,
+      message: 'An error occurred while fetching data'
+    }
+  }
+};
+
 export const LeafletMap = ({
+  theme = 'dark',
   coordinates = [14.5995, 120.9842],
-  zoom = 13,
+  zoom = 6,
   markers = [],
   onMarkerPress,
-  ShowZoomControls = true,
+  ShowZoomControls = false,
   route = null,
-  ShowDirectionPanel = false
+  ShowDirectionPanel = false,
 }) => {
+
   const [directions, setDirections] = useState([]);
+
+  let url;
+  let mapFilter;
+
+  if (theme.toLowerCase() === 'dark') {
+    url = 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
+    mapFilter = `#map {
+            filter: invert(1) hue-rotate(200deg) brightness(2.5) contrast(1.1);
+          }`
+  }
+  else if (theme.toLowerCase() === 'light') {
+    url = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+  }
+  else {
+    throw new Error('Invalid theme. Use "light" or "dark" only.');
+  }
+
+  
 
   const template = `
     <!DOCTYPE html>
@@ -24,20 +81,33 @@ export const LeafletMap = ({
         <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
         <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
         <style>
-          html, body, #map { height: 100%; margin: 0; padding: 0; }
-          /* Hide the built-in routing panel & toggle completely */
-          .leaflet-routing-container { display: none !important; }
+          html, body, #map { 
+            height: 100%; 
+            margin: 0; 
+            padding: 0; 
+          }
+          .leaflet-routing-container { 
+            display: none !important; 
+          }
+
+          ${mapFilter || ''}
+          
         </style>
       </head>
       <body>
         <div id="map"></div>
         <script>
-          const map = L.map('map', {
+
+          let focusTimer = null;
+          let isUserInteracting = false;
+          let autoFocusEnabled = ${route?.onFocus ? 'true' : 'false'};
+
+          let map = L.map('map', {
             zoomControl: ${ShowZoomControls},
             attributionControl: false,
           }).setView([${coordinates[0]}, ${coordinates[1]}], ${zoom});
 
-          L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          L.tileLayer('${url}', {
             maxZoom: 19,
           }).addTo(map);
 
@@ -51,7 +121,6 @@ export const LeafletMap = ({
             });
           });
 
-          // Add route
           const route = ${JSON.stringify(route)};
           if (route && route.start && route.end) {
             const control = L.Routing.control({
@@ -59,6 +128,13 @@ export const LeafletMap = ({
                 L.latLng(route.start[0], route.start[1]),
                 L.latLng(route.end[0], route.end[1])
               ],
+              lineOptions: {
+                  styles: [
+                      {color: route.routeColor || 'red', opacity: 0.15, weight: 9}, // Outer border
+                      {color: route.routeColor || 'red', opacity: 0.8, weight: 6},  // Inner line
+                      {color: route.routeColor || 'red', opacity: 1, weight: 2}      // Actual route color
+                  ]
+              },
               routeWhileDragging: false,
               addWaypoints: false,
               draggableWaypoints: false,
@@ -80,6 +156,27 @@ export const LeafletMap = ({
             });
           }
 
+          function focusMap(lat, lng, zoom) {
+            if (map && !isUserInteracting && autoFocusEnabled) {
+              map.setView([lat, lng], zoom || map.getZoom());
+            }
+          }
+
+          map.on('movestart', () => {
+            isUserInteracting = true;
+            clearTimeout(focusTimer);
+            // disable auto-focus for 30s after user moves
+            focusTimer = setTimeout(() => {
+              isUserInteracting = false;
+            }, 5000);
+          });
+
+          if (autoFocusEnabled) {
+            setInterval(() => {
+              focusMap(route.start[0], route.start[1], ${zoom});
+            }, 5000);
+          }
+
           setTimeout(() => map.invalidateSize(), 500);
         </script>
       </body>
@@ -89,7 +186,7 @@ export const LeafletMap = ({
   const Navigation_Direction_Panel = ({ item }) => {
     return (
       <View style={{ padding: 6 }}>
-        <Text style={{ fontSize: 14 }}>{item.text}</Text>
+        <Text style={{ fontSize: 14, color: theme === "dark" ? "white":'gray'}}>{item.text}</Text>
         <Text style={{ fontSize: 12, color: "gray" }}>
           {Math.round(item.distance)}m · {Math.round(item.time / 60)} min
         </Text>
@@ -100,6 +197,7 @@ export const LeafletMap = ({
   return (
     <View style={{ flex: 1, height: "100%" }}>
       <WebView
+        key={JSON.stringify(markers)}
         originWhitelist={["*"]}
         source={{ html: template }}
         style={{ flex: 1 }}
@@ -118,8 +216,8 @@ export const LeafletMap = ({
       />
 
       {ShowDirectionPanel && directions.length > 0 && (
-        <View style={{position: "absolute",bottom: 0,width: "100%",padding: 12,paddingBottom: 30}}>
-          <View style={{width: "100%",backgroundColor: "white",padding: 10,borderTopStartRadius: 20,borderTopEndRadius: 20,minHeight: 200,borderColor: "gray",borderWidth: 1,maxHeight: 300,}}>
+        <View style={{position: "absolute",bottom: 0,width: "100%", paddingLeft: 10, paddingRight: 10}}>
+          <View style={{width: "100%",backgroundColor: theme === "dark"? "#00000013":"white",padding: 10,borderTopStartRadius: 20,borderTopEndRadius: 20,minHeight: 100,borderColor: "gray",borderWidth: 1, maxHeight: 250, marginBottom: 35}}>
             <FlatList
               data={directions}
               keyExtractor={(_, i) => i.toString()}

@@ -1,29 +1,31 @@
-{   
-    "name":"expo-leaflet-navigation-map",
-    "author": "Kark Angelo V. Pada",
-    "version": "1.0.0",
-    "description":"A component for integrating LeafletJS map via web view to your react-native application on Expo projects.",
-    "main": "./index.js",
-    "type": "module",
-    "types": "./index.d.ts",
-    "module": "./index.js",
-    "dependencies": {
-        "react-native-webview": "13.16.0"
-    },
-    "keywords": ["expo","mapping","react-native","navigation", "directions", "Leaflet", "osm", "easy integration", "component", "map"],
-    "license": "MIT",
-    "peerDependencies": {
-        "react": ">=17",
-        "react-native": ">=0.68",
-        "expo": ">=48"
-    },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/KarkAngelo114/expo-leaflet-navigation-map"
-    },
-    "homepage": "https://github.com/KarkAngelo114/expo-leaflet-navigation-map#readme",
-    "bugs": {
-        "url": "https://github.com/KarkAngelo114/expo-leaflet-navigation-map/issues"
-    }
-
+{
+  "name": "expo-leaflet-navigation-map",
+  "version": "1.0.2",
+  "description": "A component for integrating LeafletJS map via web view to your react-native application on Expo projects.",
+  "main": "./index.js",
+  "module":"./index.js",
+  "dependencies":{
+    "react-native-webview":"13.16.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KarkAngelo114/expo-leaflet-navigation-map.git"
+  },
+  "keywords":["expo","mapping","react-native","navigation","directions","Leaflet","osm","easy integration","component","map"],
+  "peerDependencies":{
+    "expo":">=48",
+    "react":">=17",
+    "react-native":">=0.68"
+  },
+  "author": "Kark Angelo V. Pada",
+  "license": "MIT",
+  "type": "commonjs",
+  "types": "./index.d.ts",
+  "bugs": {
+    "url": "https://github.com/KarkAngelo114/expo-leaflet-navigation-map/issues"
+  },
+  "homepage": "https://github.com/KarkAngelo114/expo-leaflet-navigation-map#readme"
 }

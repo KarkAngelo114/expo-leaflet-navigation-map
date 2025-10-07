@@ -1,5 +1,7 @@
 /**
- *  Allows you to integrate mapping component in your app.
+ *  expo-lealfet-navigation-map by Kark Angelo V. Pada
+ *
+ * This component allows you to integrate a leaflet map into your Expo React Native application through a webview.
  */
 
 declare module 'expo-leaflet-navigation-map' {
@@ -15,6 +17,8 @@ declare module 'expo-leaflet-navigation-map' {
   export interface Route {
     start: [number, number];
     end: [number, number];
+    routeColor: string;
+    onFocus: boolean;
   }
 
   export interface LeafletMapProps {
@@ -25,7 +29,15 @@ declare module 'expo-leaflet-navigation-map' {
     ShowZoomControls?: boolean;
     route?: Route | null;
     ShowDirectionPanel?: boolean;
+    theme?: 'light' | 'dark';
   }
 
   export const LeafletMap: React.FC<LeafletMapProps>;
+
+  /**
+  * 
+  * @param {String} PlaceName - Name of the place to search 
+  * @returns {Object} - returns an Object containing StatusCode, responseData, and message
+  */
+  export function SearchByPlace(PlaceName: String): Object;
 }
