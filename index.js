@@ -40,7 +40,7 @@ export const SearchByPlace = async (PlaceName) => {
 };
 
 export const LeafletMap = ({
-  theme = 'dark',
+  theme = 'light',
   coordinates = [14.5995, 120.9842],
   zoom = 6,
   markers = [],

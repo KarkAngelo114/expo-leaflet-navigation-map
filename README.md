@@ -109,7 +109,7 @@ const App = () => {
 export default App;
 ```
 
-You can also pass `themes` props in the component. This will change the appearance of your map by passing 'light' or 'dark' values in the prop.
+You can also pass `theme` props in the component. This will change the appearance of your map by passing 'light' or 'dark' values in the prop.
 
 ```Javascript
 
@@ -124,7 +124,7 @@ const App = () => {
     return (
         <View style={{flex:1}}>
             <LeafletMap
-                themes = {'dark'} // or 'light'
+                theme = {'dark'} // or 'light'
                 coordinates = {[lat, long]} 
                 markers = {[
                     { id:1, lat: lat, lng: long, title: "My Location" }, 
@@ -181,7 +181,7 @@ const App = () => {
     return (
         <View style={{flex:1}}>
             <LeafletMap
-                themes = {'dark'} // or 'light'
+                theme = {'dark'} // or 'light'
                 coordinates = {[lat, long]} 
                 markers = {[
                     { id:1, lat: lat, lng: long, title: "My Location" }, 
